@@ -1,0 +1,11 @@
+.mocktailCard {
+  margin: 12px 4px;
+  
+  img {
+    width: 150px;
+  }
+}
+
+.completed {
+  border: 2px solid red;
+}
