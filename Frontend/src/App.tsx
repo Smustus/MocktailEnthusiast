@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import './App.css'
 import { fetchMocktails } from './utilities/fetch'
 import { Mocktail } from './utilities/types'
@@ -11,7 +11,7 @@ function App() {
   const [savedMocktailList, setSavedMocktailList] = useState<Mocktail[]>([]);
   const [completedCocktails, setCompletedCocktails] = useState<Mocktail[]>([])
   const [searchResults, setSearchResults] = useState<Mocktail[]>([]);
-  const [activeComponent, setActiveComponent] = useState<SetStateAction<string>>('search');
+  const [activeComponent, setActiveComponent] = useState<SetStateAction<string>>('explore');
 
   useEffect(() => {
     console.log(completedCocktails);
@@ -32,10 +32,6 @@ function App() {
     mocktails()
   }, []);
 
-  const toggleActiveComponent = (component: SetStateAction<string>) => {
-    setActiveComponent(component);
-  }
-
   const addMocktail = (id: string) => {
     const mocktail = mocktailList.find((mocktail) => {
       return mocktail.idDrink === id
@@ -49,10 +45,20 @@ function App() {
     }
   }
 
-  const removeMocktail = (id: string) => {
-    mocktailList.filter((mocktail) => {
-      return mocktail.idDrink !== id
-    });
+  const removeMocktail = (id: string, component: string) => {    
+    if(component === 'list'){
+      setSavedMocktailList(savedMocktailList.filter((mocktail) => {
+        return mocktail.idDrink !== id
+        })
+      );
+    }
+    if(component === 'completed'){
+      setCompletedCocktails(completedCocktails.filter((mocktail) => {
+        return mocktail.idDrink !== id
+        })
+      );
+    }
+    
   }
 
   const changeMocktailStatus = (id: string) => {
@@ -80,28 +86,42 @@ function App() {
     return completedCocktails.some((completedMocktail) => completedMocktail.idDrink === id);
   };
 
+  const clearAll = (component: string) => {
+    if(component === 'list'){
+      setSavedMocktailList([])
+    }
+    if(component === 'completed'){
+      setCompletedCocktails([]);
+    }
+  }
+
 
   return (
     <>
       <h1>Mark's To-drink list</h1>
-      {
-        activeComponent === 'search' ? <Search setSearchResults={setSearchResults} mocktailList={mocktailList} /> : ""
-      }
-      <button onClick={() => toggleActiveComponent('search')}>Search&Add</button>
-      <button onClick={() => toggleActiveComponent('list')}>Todo-list</button>
       
+      {
+        activeComponent === 'list' || 'explore' ? <Search setSearchResults={setSearchResults} mocktailList={mocktailList} /> : ""
+      }
+
+      <nav className='navigation'>   
+        <button onClick={() => setActiveComponent('explore')} className={activeComponent === 'explore' ? 'active' : ''}>Explore</button>
+        <button onClick={() => setActiveComponent('list')} className={activeComponent === 'list' ? 'active' : ''}>Todo-list</button>
+        <button onClick={() => setActiveComponent('completed')} className={activeComponent === 'completed' ? 'active' : ''}>Completed</button>
+      </nav>
+        {
+          (activeComponent === 'list' || activeComponent === 'completed') && <button onClick={() => clearAll(activeComponent)}>Clear</button>
+        }
       <main className='main'>
         <section className='drinkList'>
         {
-          activeComponent === 'search' ?
+          activeComponent === 'explore' &&
           (
             searchResults.length > 0 ? searchResults.map((mocktail) => (
               <MocktailCard 
                 key={mocktail.idDrink} 
                 mocktailData={mocktail} 
                 addMocktail={() =>  addMocktail(mocktail.idDrink)}
-                removeMocktail={() => removeMocktail(mocktail.idDrink)} 
-                changeMocktailStatus={() => changeMocktailStatus(mocktail.idDrink)}
                 completed={toggleCompleted(mocktail.idDrink)}
               />
             )) 
@@ -111,19 +131,31 @@ function App() {
                 key={mocktail.idDrink} 
                 mocktailData={mocktail} 
                 addMocktail={() =>  addMocktail(mocktail.idDrink)}
-                removeMocktail={() => removeMocktail(mocktail.idDrink)} 
-                changeMocktailStatus={() => changeMocktailStatus(mocktail.idDrink)}
                 completed={toggleCompleted(mocktail.idDrink)}
               />
             ))
-          ) : (
+          )
+        }
+        {
+          activeComponent === 'list' && (
             savedMocktailList.map((mocktail) => (
               <MocktailCard 
                 key={mocktail.idDrink} 
                 mocktailData={mocktail} 
-                addMocktail={() =>  addMocktail(mocktail.idDrink)}
-                removeMocktail={() => removeMocktail(mocktail.idDrink)} 
+                removeMocktail={() => removeMocktail(mocktail.idDrink, activeComponent)} 
                 changeMocktailStatus={() => changeMocktailStatus(mocktail.idDrink)}
+                completed={toggleCompleted(mocktail.idDrink)}
+              />
+            ))
+          )
+        }
+        {
+          activeComponent === 'completed' && (
+            completedCocktails.map((mocktail) => (
+              <MocktailCard 
+                key={mocktail.idDrink} 
+                mocktailData={mocktail} 
+                removeMocktail={() => removeMocktail(mocktail.idDrink, activeComponent)} 
                 completed={toggleCompleted(mocktail.idDrink)}
               />
             ))
@@ -131,7 +163,6 @@ function App() {
         }
         </section>
       </main>
-      
     </>
   )
 }

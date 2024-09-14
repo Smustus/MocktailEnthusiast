@@ -1,14 +1,27 @@
 #root {
   max-width: 1280px;
+  min-width: 80%;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+.navigation {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+
+  button {
+    margin: 0px 12px;
+  }
 }
 
 .main {
@@ -24,6 +37,11 @@
 }
 
 .drinkList {
+  min-width: 80%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+}
+
+.active {
+  border: 2px solid white;
 }

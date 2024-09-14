@@ -1,12 +1,11 @@
-import React, { useEffect } from 'react'
 import './MocktailCard.css';
 import { Mocktail } from '../../utilities/types';
 
 interface MocktailCardProps {
   mocktailData: Mocktail,
-  addMocktail: () => void,
-  removeMocktail: () => void,
-  changeMocktailStatus: () => void,
+  addMocktail?: () => void,
+  removeMocktail?: () => void,
+  changeMocktailStatus?: () => void,
   completed?: boolean,
 }
 
@@ -21,11 +20,15 @@ const MocktailCard = ({mocktailData, addMocktail, removeMocktail, changeMocktail
         <img src={strDrinkThumb} alt={strDrink} />
       </section>
       <section className="mocktailCard_btns">
-        <button onClick={addMocktail}>Add</button>
-        <button onClick={removeMocktail}>Remove</button>
+        {
+          addMocktail && <button onClick={addMocktail}>Add</button>
+        }
+        {
+          removeMocktail && <button onClick={removeMocktail}>Remove</button>
+        }
       </section>
     </article>
   )
 }
 
-export default MocktailCard
+export default MocktailCard;

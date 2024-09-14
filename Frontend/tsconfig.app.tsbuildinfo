@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/mocktailcard/mocktailcard.tsx","./src/components/search/searchinput.tsx","./src/utilities/fetch.ts","./src/utilities/types.ts"],"version":"5.6.2"}
