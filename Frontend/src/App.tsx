@@ -99,9 +99,8 @@ function App() {
   return (
     <>
       <h1>Mark's To-drink list</h1>
-      
       {
-        activeComponent === 'list' || 'explore' ? <Search setSearchResults={setSearchResults} mocktailList={mocktailList} /> : ""
+        (activeComponent === 'explore') ? <Search setSearchResults={setSearchResults} mocktailList={mocktailList} /> : ""
       }
 
       <nav className='navigation'>   
